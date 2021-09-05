@@ -1,0 +1,19 @@
+{
+  "name": "mafty",
+  "version": "1.0.0",
+  "description": "Programa que construye recibos de sueldos desde planilla de Excel.",
+  "main": "./output/maftyMain.js",
+  "dependencies": {
+    "core-js": "3.17.2",
+    "exceljs": "4.3.0",
+    "ora": "6.0.0",
+    "regenerator-runtime": "0.13.9",
+    "typescript": "4.4.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marco Baldi",
+  "license": "ISC"
+}
