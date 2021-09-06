@@ -6,9 +6,6 @@ require("core-js/modules/es.symbol");
 require("core-js/modules/es.symbol.async-iterator");
 require("regenerator-runtime/runtime");
 
-const Excel = require("exceljs");
-const readline = require("readline-sync");
-
 type trabajadorType = {
 	ci: any;
 	nombre: any;
@@ -39,12 +36,7 @@ type empresaData = {
 	subgrupo: string;
 };
 
-type fechaUruguay = {
-	dd: string;
-	mm: string;
-	yyyy: string;
-};
-
+const Excel = require("exceljs");
 const defaultFileToWrite = "./reciboALlenar.xlsx";
 const defaultFileToRead = "./datosTrabajadores.xlsx";
 const defaultBusinessData = "./datosEmpresa.xlsx";
@@ -139,18 +131,10 @@ async function getDatosTrabajadores(file?: string) {
 async function crearArchivosParaTrabajadores() {
 	for (let index = 0; index < trabajadoresAProcesar.length; index++) {
 		const trabajador = trabajadoresAProcesar[index];
-		const fechasArray: string[] = trabajador.fecha_cargo.split("/");
+		const dateNow = new Date();
+		const fechaRemuneracion = `${dateNow.getMonth()}/${dateNow.getFullYear()}`;
 
-		const fechaCargo = {
-			dd: fechasArray[0],
-			mm: fechasArray[1],
-			yyyy: fechasArray[2],
-		};
-
-		const fechaRemuneracion = `${fechaCargo.mm}/${fechaCargo.yyyy}`;
-
-		const fileToWrite = `./ExcelsAImprimir/${trabajador.nombre}--${fechaCargo.dd}-${fechaCargo.mm}-${fechaCargo.yyyy}.xlsx`;
-
+		const fileToWrite = `./ExcelsAImprimir/${trabajador.nombre}--${dateNow.getDay()}-${dateNow.getMonth()}-${dateNow.getFullYear()}.xlsx`;
 		try {
 			const newFileToWrite = new Excel.Workbook();
 
@@ -245,20 +229,13 @@ async function actualizarDatosEmpresa(file?: any) {
 }
 
 async function main() {
-	readline.question("Apretar cualquier tecla para iniciar. Salga cerrando esta ventana.");
-
 	console.log("Leyendo archivo de empresa...");
 	await actualizarDatosEmpresa();
-
 	console.log("Leyendo archivo de trabajadores...");
 	await getDatosTrabajadores();
-
 	console.log("Creando recibos excel de trabajadores...");
 	await crearArchivosParaTrabajadores();
-
 	console.log("¡Finalizado!");
-
-	readline.question("Apretar cualquier tecla para salir.");
 }
 
 main();
