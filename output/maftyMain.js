@@ -7,6 +7,7 @@ require("core-js/modules/es.symbol");
 require("core-js/modules/es.symbol.async-iterator");
 require("regenerator-runtime/runtime");
 const Excel = require("exceljs");
+const readline = require("readline-sync");
 const defaultFileToWrite = "./reciboALlenar.xlsx";
 const defaultFileToRead = "./datosTrabajadores.xlsx";
 const defaultBusinessData = "./datosEmpresa.xlsx";
@@ -93,9 +94,14 @@ async function getDatosTrabajadores(file) {
 async function crearArchivosParaTrabajadores() {
     for (let index = 0; index < trabajadoresAProcesar.length; index++) {
         const trabajador = trabajadoresAProcesar[index];
-        const dateNow = new Date();
-        const fechaRemuneracion = `${dateNow.getMonth()}/${dateNow.getFullYear()}`;
-        const fileToWrite = `./ExcelsAImprimir/${trabajador.nombre}--${dateNow.getDay()}-${dateNow.getMonth()}-${dateNow.getFullYear()}.xlsx`;
+        const fechasArray = trabajador.fecha_cargo.split("/");
+        const fechaCargo = {
+            dd: fechasArray[0],
+            mm: fechasArray[1],
+            yyyy: fechasArray[2],
+        };
+        const fechaRemuneracion = `${fechaCargo.mm}/${fechaCargo.yyyy}`;
+        const fileToWrite = `./ExcelsAImprimir/${trabajador.nombre}--${fechaCargo.dd}-${fechaCargo.mm}-${fechaCargo.yyyy}.xlsx`;
         try {
             const newFileToWrite = new Excel.Workbook();
             newFileToWrite.xlsx.writeFile(fileToWrite);
@@ -177,12 +183,14 @@ async function actualizarDatosEmpresa(file) {
     }
 }
 async function main() {
-    console.log("Leyendo archivo de empresa...");
+    readline.question("Apretar cualquier tecla para iniciar. Salga cerrando esta ventana.");
+    console.log("👓 Leyendo archivo de empresa...");
     await actualizarDatosEmpresa();
-    console.log("Leyendo archivo de trabajadores...");
+    console.log("👓 Leyendo archivo de trabajadores...");
     await getDatosTrabajadores();
-    console.log("Creando recibos excel de trabajadores...");
+    console.log("🔨 Creando recibos excel de trabajadores... 🔨");
     await crearArchivosParaTrabajadores();
-    console.log("¡Finalizado!");
+    console.log("🎉 ¡Finalizado! 🎉");
+    readline.question("Apretar cualquier tecla para salir.");
 }
 main();
