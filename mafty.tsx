@@ -1,13 +1,13 @@
-require('core-js/modules/es.promise');
-require('core-js/modules/es.string.includes');
-require('core-js/modules/es.object.assign');
-require('core-js/modules/es.object.keys');
-require('core-js/modules/es.symbol');
-require('core-js/modules/es.symbol.async-iterator');
-require('regenerator-runtime/runtime');
+import 'core-js/modules/es.promise';
+import 'core-js/modules/es.string.includes';
+import 'core-js/modules/es.object.assign';
+import 'core-js/modules/es.object.keys';
+import 'core-js/modules/es.symbol';
+import 'core-js/modules/es.symbol.async-iterator';
+import 'regenerator-runtime/runtime';
 
-const Excel = require('exceljs');
-const readline = require('readline-sync');
+import Excel from 'exceljs';
+import readline from 'readline-sync';
 
 type trabajadorType = {
 	ci: any;
@@ -95,9 +95,12 @@ async function writeOnCell(
 	try {
 		const workbook = new Excel.Workbook();
 		await workbook.xlsx.readFile(fileToRead);
-		const worksheet = workbook.getWorksheet();
+		const worksheet = workbook.getWorksheet(1);
 		worksheet.getCell(cell).value = value;
 		const fileToWrite = newFile ?? file;
+
+		if (!fileToWrite) return;
+
 		await workbook.xlsx.writeFile(fileToWrite);
 	} catch (e) {
 		console.error(e);
@@ -112,7 +115,7 @@ async function getDatosTrabajadores(file = Files.WorkersData) {
 
 		await workbook.xlsx.readFile(file);
 
-		workbook.getWorksheet().eachRow(function (row: any, rowNumber: any) {
+		workbook.getWorksheet(1).eachRow(function (row: any, rowNumber: any) {
 			row = row.values;
 			if (rowNumber == 1) {
 				celdasAEditar = {
@@ -242,7 +245,7 @@ async function recalcularFormulas(file: Files | string) {
 
 		await workbook.xlsx.readFile(file);
 
-		const worksheet = workbook.getWorksheet();
+		const worksheet = workbook.getWorksheet(1);
 
 		worksheet.eachRow((row: any) => {
 			row.eachCell((cell: any) => {
@@ -262,7 +265,7 @@ async function actualizarDatosEmpresa(file = Files.BusinessData) {
 
 		await workbook.xlsx.readFile(file);
 
-		workbook.getWorksheet().eachRow(function (row: any, rowNumber: any) {
+		workbook.getWorksheet(1).eachRow(function (row: any, rowNumber: any) {
 			row = row.values;
 
 			switch (rowNumber) {

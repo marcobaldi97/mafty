@@ -1,13 +1,17 @@
 "use strict";
-require('core-js/modules/es.promise');
-require('core-js/modules/es.string.includes');
-require('core-js/modules/es.object.assign');
-require('core-js/modules/es.object.keys');
-require('core-js/modules/es.symbol');
-require('core-js/modules/es.symbol.async-iterator');
-require('regenerator-runtime/runtime');
-const Excel = require('exceljs');
-const readline = require('readline-sync');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+require("core-js/modules/es.promise");
+require("core-js/modules/es.string.includes");
+require("core-js/modules/es.object.assign");
+require("core-js/modules/es.object.keys");
+require("core-js/modules/es.symbol");
+require("core-js/modules/es.symbol.async-iterator");
+require("regenerator-runtime/runtime");
+const exceljs_1 = __importDefault(require("exceljs"));
+const readline_sync_1 = __importDefault(require("readline-sync"));
 var Files;
 (function (Files) {
     Files["FileToWrite"] = "./reciboALlenar.xlsx";
@@ -44,11 +48,13 @@ let celdasAEditar = {
 async function writeOnCell(cell, value, file, newFile, workbookP) {
     const fileToRead = file ?? Files.FileToWrite;
     try {
-        const workbook = new Excel.Workbook();
+        const workbook = new exceljs_1.default.Workbook();
         await workbook.xlsx.readFile(fileToRead);
-        const worksheet = workbook.getWorksheet();
+        const worksheet = workbook.getWorksheet(1);
         worksheet.getCell(cell).value = value;
         const fileToWrite = newFile ?? file;
+        if (!fileToWrite)
+            return;
         await workbook.xlsx.writeFile(fileToWrite);
     }
     catch (e) {
@@ -58,9 +64,9 @@ async function writeOnCell(cell, value, file, newFile, workbookP) {
 }
 async function getDatosTrabajadores(file = Files.WorkersData) {
     try {
-        const workbook = new Excel.Workbook();
+        const workbook = new exceljs_1.default.Workbook();
         await workbook.xlsx.readFile(file);
-        workbook.getWorksheet().eachRow(function (row, rowNumber) {
+        workbook.getWorksheet(1).eachRow(function (row, rowNumber) {
             row = row.values;
             if (rowNumber == 1) {
                 celdasAEditar = {
@@ -110,7 +116,7 @@ async function crearArchivosParaTrabajadores() {
         const fechaRemuneracion = `${fechaCargo.mm}/${fechaCargo.yyyy}`;
         const fileToWrite = `./ExcelsAImprimir/${trabajador.nombre}--${fechaCargo.dd}-${fechaCargo.mm}-${fechaCargo.yyyy}.xlsx`;
         try {
-            const newFileToWrite = new Excel.Workbook();
+            const newFileToWrite = new exceljs_1.default.Workbook();
             newFileToWrite.xlsx.writeFile(fileToWrite);
             await writeOnCell(celdasAEditar.ci, trabajador.ci, undefined, fileToWrite);
             await writeOnCell(celdasAEditar.nombre, trabajador.nombre, fileToWrite, fileToWrite);
@@ -132,9 +138,9 @@ async function crearArchivosParaTrabajadores() {
 }
 async function recalcularFormulas(file) {
     try {
-        const workbook = new Excel.Workbook();
+        const workbook = new exceljs_1.default.Workbook();
         await workbook.xlsx.readFile(file);
-        const worksheet = workbook.getWorksheet();
+        const worksheet = workbook.getWorksheet(1);
         worksheet.eachRow((row) => {
             row.eachCell((cell) => {
                 if (cell.model.result !== undefined)
@@ -149,9 +155,9 @@ async function recalcularFormulas(file) {
 }
 async function actualizarDatosEmpresa(file = Files.BusinessData) {
     try {
-        let workbook = new Excel.Workbook();
+        let workbook = new exceljs_1.default.Workbook();
         await workbook.xlsx.readFile(file);
-        workbook.getWorksheet().eachRow(function (row, rowNumber) {
+        workbook.getWorksheet(1).eachRow(function (row, rowNumber) {
             row = row.values;
             switch (rowNumber) {
                 case 1:
@@ -189,7 +195,7 @@ async function actualizarDatosEmpresa(file = Files.BusinessData) {
     }
 }
 async function main() {
-    readline.question('Apretar cualquier tecla para iniciar. Salga cerrando esta ventana.');
+    readline_sync_1.default.question('Apretar cualquier tecla para iniciar. Salga cerrando esta ventana.');
     console.log('Leyendo archivo de empresa...');
     await actualizarDatosEmpresa();
     console.log('Leyendo archivo de trabajadores...');
@@ -197,6 +203,6 @@ async function main() {
     console.log('Creando recibos excel de trabajadores...');
     await crearArchivosParaTrabajadores();
     console.log('¡Finalizado!');
-    readline.question('Apretar cualquier tecla para salir.');
+    readline_sync_1.default.question('Apretar cualquier tecla para salir.');
 }
 main();
