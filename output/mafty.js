@@ -11,7 +11,7 @@ const readline = require('readline-sync');
 var Files;
 (function (Files) {
     Files["FileToWrite"] = "./reciboALlenar.xlsx";
-    Files["FileToRead"] = "./datosTrabajadores.xlsx";
+    Files["WorkersData"] = "./datosTrabajadores.xlsx";
     Files["BusinessData"] = "./datosEmpresa.xlsx";
 })(Files || (Files = {}));
 const trabajadoresAProcesar = [];
@@ -56,7 +56,7 @@ async function writeOnCell(cell, value, file, newFile, workbookP) {
         console.log(`Error!`);
     }
 }
-async function getDatosTrabajadores(file = Files) {
+async function getDatosTrabajadores(file = Files.WorkersData) {
     try {
         const workbook = new Excel.Workbook();
         await workbook.xlsx.readFile(file);

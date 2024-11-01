@@ -49,7 +49,7 @@ type fechaUruguay = {
 
 enum Files {
 	FileToWrite = './reciboALlenar.xlsx',
-	FileToRead = './datosTrabajadores.xlsx',
+	WorkersData = './datosTrabajadores.xlsx',
 	BusinessData = './datosEmpresa.xlsx',
 }
 
@@ -106,7 +106,7 @@ async function writeOnCell(
 	}
 }
 
-async function getDatosTrabajadores(file = Files) {
+async function getDatosTrabajadores(file = Files.WorkersData) {
 	try {
 		const workbook = new Excel.Workbook();
 

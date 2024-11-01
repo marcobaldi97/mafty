@@ -17,7 +17,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"compile": "tsc",
-		"create_exe": "nexe ./src/output/mafty.js --build --target windows-x86-8.9.4 --verbose",
+		"create_exe": "pkg ./output/mafty.js --targets node14-win-x64 --output ./output/mafty.exe",
 		"executable": "npm run compile && npm run create_exe"
 	},
 	"author": "Marco Baldi",
