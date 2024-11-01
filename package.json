@@ -1,20 +1,25 @@
 {
-  "name": "mafty",
-  "version": "1.0.0",
-  "description": "Programa que construye recibos de sueldos desde planilla de Excel.",
-  "main": "./output/maftyMain.js",
-  "dependencies": {
-    "core-js": "3.17.2",
-    "exceljs": "4.3.0",
-    "ora": "6.0.0",
-    "readline-sync": "^1.4.10",
-    "regenerator-runtime": "0.13.9",
-    "typescript": "4.4.2"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Marco Baldi",
-  "license": "ISC"
+	"name": "mafty",
+	"version": "1.0.1",
+	"description": "Programa que construye recibos de sueldos desde planilla de Excel.",
+	"main": "./output/mafty.js",
+	"dependencies": {
+		"core-js": "3.17.2",
+		"exceljs": "4.3.0",
+		"ora": "6.0.0",
+		"readline-sync": "1.4.10",
+		"regenerator-runtime": "0.13.9",
+		"typescript": "4.4.2"
+	},
+	"devDependencies": {
+		"prettier": "3.3.3"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"compile": "tsc",
+		"create_exe": "nexe ./src/output/mafty.js --build",
+		"executable": "npm run compile && npm run create_exe"
+	},
+	"author": "Marco Baldi",
+	"license": "ISC"
 }

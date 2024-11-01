@@ -1,43 +1,48 @@
 "use strict";
-require("core-js/modules/es.promise");
-require("core-js/modules/es.string.includes");
-require("core-js/modules/es.object.assign");
-require("core-js/modules/es.object.keys");
-require("core-js/modules/es.symbol");
-require("core-js/modules/es.symbol.async-iterator");
-require("regenerator-runtime/runtime");
-const Excel = require("exceljs");
-const readline = require("readline-sync");
-const defaultFileToWrite = "./reciboALlenar.xlsx";
-const defaultFileToRead = "./datosTrabajadores.xlsx";
-const defaultBusinessData = "./datosEmpresa.xlsx";
+require('core-js/modules/es.promise');
+require('core-js/modules/es.string.includes');
+require('core-js/modules/es.object.assign');
+require('core-js/modules/es.object.keys');
+require('core-js/modules/es.symbol');
+require('core-js/modules/es.symbol.async-iterator');
+require('regenerator-runtime/runtime');
+const Excel = require('exceljs');
+const readline = require('readline-sync');
+var Files;
+(function (Files) {
+    Files["FileToWrite"] = "./reciboALlenar.xlsx";
+    Files["FileToRead"] = "./datosTrabajadores.xlsx";
+    Files["BusinessData"] = "./datosEmpresa.xlsx";
+})(Files || (Files = {}));
 const trabajadoresAProcesar = [];
 let empresaDataCeldas = {
-    nombre: "",
-    numero_mtss: "",
-    rut: "",
-    grupo: "",
-    subgrupo: "",
+    nombre: '',
+    numero_mtss: '',
+    rut: '',
+    grupo: '',
+    subgrupo: '',
 };
 let empresaDataAAplicar = {
-    nombre: "",
-    numero_mtss: "",
-    rut: "",
-    grupo: "",
-    subgrupo: "",
+    nombre: '',
+    numero_mtss: '',
+    rut: '',
+    grupo: '',
+    subgrupo: '',
 };
 let celdasAEditar = {
-    ci: "",
-    nombre: "",
-    cargo: "",
-    fecha_ingreso: "",
-    afiliacion_bps: "",
-    sueldo_nominal: "",
-    fonasa: "",
-    fecha_cargo: "",
+    ci: '',
+    nombre: '',
+    cargo: '',
+    fecha_ingreso: '',
+    afiliacion_bps: '',
+    sueldo_nominal: '',
+    fonasa: '',
+    fecha_cargo: '',
+    fecha_remuneracion: '',
+    fecha_primero: '',
 };
 async function writeOnCell(cell, value, file, newFile, workbookP) {
-    const fileToRead = file ?? defaultFileToWrite;
+    const fileToRead = file ?? Files.FileToWrite;
     try {
         const workbook = new Excel.Workbook();
         await workbook.xlsx.readFile(fileToRead);
@@ -51,8 +56,7 @@ async function writeOnCell(cell, value, file, newFile, workbookP) {
         console.log(`Error!`);
     }
 }
-async function getDatosTrabajadores(file) {
-    file = file ?? defaultFileToRead;
+async function getDatosTrabajadores(file = Files) {
     try {
         const workbook = new Excel.Workbook();
         await workbook.xlsx.readFile(file);
@@ -68,10 +72,15 @@ async function getDatosTrabajadores(file) {
                     sueldo_nominal: row[6],
                     fonasa: row[7],
                     fecha_cargo: row[8],
+                    fecha_remuneracion: row[9],
+                    fecha_primero: row[10],
                 };
                 return;
             }
+            //Ignoro la segunda y tercer fila que es info para el usuario
             if (rowNumber == 2)
+                return;
+            if (rowNumber == 3)
                 return;
             const trabajadorToPush = {
                 ci: row[1],
@@ -86,15 +95,13 @@ async function getDatosTrabajadores(file) {
             trabajadoresAProcesar.push(trabajadorToPush);
         });
     }
-    catch (e) {
-        console.log(`Error!`);
-        console.log(e);
+    catch (error) {
+        console.error(error);
     }
 }
 async function crearArchivosParaTrabajadores() {
-    for (let index = 0; index < trabajadoresAProcesar.length; index++) {
-        const trabajador = trabajadoresAProcesar[index];
-        const fechasArray = trabajador.fecha_cargo.split("/");
+    for (const trabajador of trabajadoresAProcesar) {
+        const fechasArray = trabajador.fecha_cargo.split('/');
         const fechaCargo = {
             dd: fechasArray[0],
             mm: fechasArray[1],
@@ -113,13 +120,13 @@ async function crearArchivosParaTrabajadores() {
             await writeOnCell(celdasAEditar.sueldo_nominal, trabajador.sueldo_nominal, fileToWrite, fileToWrite);
             await writeOnCell(celdasAEditar.fonasa, trabajador.fonasa, fileToWrite, fileToWrite);
             await writeOnCell(celdasAEditar.fecha_cargo, trabajador.fecha_cargo, fileToWrite, fileToWrite);
-            await writeOnCell("E2", fechaRemuneracion, fileToWrite, fileToWrite);
+            await writeOnCell(celdasAEditar.fecha_remuneracion, fechaRemuneracion, fileToWrite, fileToWrite);
             await recalcularFormulas(fileToWrite);
-            console.log(`Recibo de ${trabajador.nombre} procesado!`);
+            console.log(`Recibo de ${trabajador.nombre} generado!`);
         }
         catch (error) {
-            console.log(error);
-            console.log("Algo malo ocurrio procesando a " + trabajador.nombre);
+            console.error(error);
+            console.log('Algo malo ha ocurrio procesando a ' + trabajador.nombre);
         }
     }
 }
@@ -140,8 +147,7 @@ async function recalcularFormulas(file) {
         console.error(error);
     }
 }
-async function actualizarDatosEmpresa(file) {
-    file = file ?? defaultBusinessData;
+async function actualizarDatosEmpresa(file = Files.BusinessData) {
     try {
         let workbook = new Excel.Workbook();
         await workbook.xlsx.readFile(file);
@@ -170,27 +176,27 @@ async function actualizarDatosEmpresa(file) {
                     break;
             }
         });
-        await writeOnCell(empresaDataCeldas.nombre, empresaDataAAplicar.nombre, defaultFileToWrite, defaultFileToWrite);
-        await writeOnCell(empresaDataCeldas.numero_mtss, empresaDataAAplicar.numero_mtss, defaultFileToWrite, defaultFileToWrite);
-        await writeOnCell(empresaDataCeldas.rut, empresaDataAAplicar.rut, defaultFileToWrite, defaultFileToWrite);
-        await writeOnCell(empresaDataCeldas.grupo, empresaDataAAplicar.grupo, defaultFileToWrite, defaultFileToWrite);
-        await writeOnCell(empresaDataCeldas.subgrupo, empresaDataAAplicar.subgrupo, defaultFileToWrite, defaultFileToWrite);
-        await recalcularFormulas(defaultFileToWrite);
+        await writeOnCell(empresaDataCeldas.nombre, empresaDataAAplicar.nombre, Files.FileToWrite, Files.FileToWrite);
+        await writeOnCell(empresaDataCeldas.numero_mtss, empresaDataAAplicar.numero_mtss, Files.FileToWrite, Files.FileToWrite);
+        await writeOnCell(empresaDataCeldas.rut, empresaDataAAplicar.rut, Files.FileToWrite, Files.FileToWrite);
+        await writeOnCell(empresaDataCeldas.grupo, empresaDataAAplicar.grupo, Files.FileToWrite, Files.FileToWrite);
+        await writeOnCell(empresaDataCeldas.subgrupo, empresaDataAAplicar.subgrupo, Files.FileToWrite, Files.FileToWrite);
+        await recalcularFormulas(Files.FileToWrite);
     }
     catch (error) {
         console.error(error);
-        console.log("Error al actualizar datos empresa.");
+        console.log('Error al actualizar datos empresa.');
     }
 }
 async function main() {
-    readline.question("Apretar cualquier tecla para iniciar. Salga cerrando esta ventana.");
-    console.log("👓 Leyendo archivo de empresa...");
+    readline.question('Apretar cualquier tecla para iniciar. Salga cerrando esta ventana.');
+    console.log('Leyendo archivo de empresa...');
     await actualizarDatosEmpresa();
-    console.log("👓 Leyendo archivo de trabajadores...");
+    console.log('Leyendo archivo de trabajadores...');
     await getDatosTrabajadores();
-    console.log("🔨 Creando recibos excel de trabajadores... 🔨");
+    console.log('Creando recibos excel de trabajadores...');
     await crearArchivosParaTrabajadores();
-    console.log("🎉 ¡Finalizado! 🎉");
-    readline.question("Apretar cualquier tecla para salir.");
+    console.log('¡Finalizado!');
+    readline.question('Apretar cualquier tecla para salir.');
 }
 main();
