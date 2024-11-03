@@ -1,11 +1,34 @@
 # mafty
 
-Programa que construye recibos de sueldos desde planilla de Excel.
+An Electron application with React and TypeScript
 
--   Escribir datos de la empres en datosEmpresa.xlsx
+## Recommended IDE Setup
 
--   Escribir datos de trabajadores fila por fila en datosTrabajadores.xlsx
+- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
--   Usar tsc ;node ./output/maftyMain.js para ejecutar. Al terminarse los recibos estaran en ExcelsAImprimir.
+## Project Setup
 
--   Abrir los Excels para que se actualizen las formulas.
+### Install
+
+```bash
+$ npm install
+```
+
+### Development
+
+```bash
+$ npm run dev
+```
+
+### Build
+
+```bash
+# For windows
+$ npm run build:win
+
+# For macOS
+$ npm run build:mac
+
+# For Linux
+$ npm run build:linux
+```
