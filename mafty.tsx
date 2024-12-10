@@ -18,6 +18,8 @@ type trabajadorType = {
 	sueldo_nominal: any;
 	fonasa: any;
 	fecha_cargo: any;
+	fecha_remuneracion: string;
+	fecha_primero: string;
 };
 
 type celdasEditarType = {
@@ -146,6 +148,8 @@ async function getDatosTrabajadores(file = Files.WorkersData) {
 				sueldo_nominal: row[6],
 				fonasa: row[7],
 				fecha_cargo: row[8],
+				fecha_remuneracion: row[9],
+				fecha_primero: row[10],
 			};
 
 			trabajadoresAProcesar.push(trabajadorToPush);
@@ -225,6 +229,13 @@ async function crearArchivosParaTrabajadores() {
 			await writeOnCell(
 				celdasAEditar.fecha_remuneracion,
 				fechaRemuneracion,
+				fileToWrite,
+				fileToWrite,
+			);
+
+			await writeOnCell(
+				celdasAEditar.fecha_primero,
+				trabajador.fecha_primero,
 				fileToWrite,
 				fileToWrite,
 			);

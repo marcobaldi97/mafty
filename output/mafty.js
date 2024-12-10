@@ -97,6 +97,8 @@ async function getDatosTrabajadores(file = Files.WorkersData) {
                 sueldo_nominal: row[6],
                 fonasa: row[7],
                 fecha_cargo: row[8],
+                fecha_remuneracion: row[9],
+                fecha_primero: row[10],
             };
             trabajadoresAProcesar.push(trabajadorToPush);
         });
@@ -127,6 +129,7 @@ async function crearArchivosParaTrabajadores() {
             await writeOnCell(celdasAEditar.fonasa, trabajador.fonasa, fileToWrite, fileToWrite);
             await writeOnCell(celdasAEditar.fecha_cargo, trabajador.fecha_cargo, fileToWrite, fileToWrite);
             await writeOnCell(celdasAEditar.fecha_remuneracion, fechaRemuneracion, fileToWrite, fileToWrite);
+            await writeOnCell(celdasAEditar.fecha_primero, trabajador.fecha_primero, fileToWrite, fileToWrite);
             await recalcularFormulas(fileToWrite);
             console.log(`Recibo de ${trabajador.nombre} generado!`);
         }
